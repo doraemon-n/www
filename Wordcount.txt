@@ -1,0 +1,170 @@
+//头文件
+#ifndef PCH_H
+#define PCH_H
+
+#include<cstring>
+#include<string>
+
+using namespace std;
+
+//功能：结构体--记录字符数和单词数
+struct Couter
+{
+	int CharacterNum;//记录字符数
+	int WordNum;//记录单词数
+	int LineNum;//记录行数
+};
+
+//功能：结构体--记录单词
+struct Word
+{
+	string ws;//存放单词
+	int lengthW;//存放单词的长度
+	int num;//单词出现的频率
+};
+
+//功能：计算文件中的字符数和行数
+class Calcu
+{public:
+	int WordNum(const char s[]);
+	int LineNum(const char s[]);
+private:;
+	Couter couter = { 0,0,0 };
+};
+
+//功能：判断是不是字符
+bool is_cha(char str);
+
+//功能：判断是否是单词
+int is_Word(string temp);
+
+
+//头文件的实现
+
+#include "pch.h"
+#include<iostream>
+#include<cstring>
+
+using namespace std;
+
+//功能：计算文件中的字符数
+int Calcu::WordNum(const char s[])
+{
+	for (int j = 0; s[j] != '\0'; j++)
+	{
+		if (s[j] == ' ')
+			(couter.WordNum++);
+	}
+	return (couter.WordNum);
+}
+
+//功能：计算文件中的行数，以'3'作为一行结束的标志
+int Calcu::LineNum(const char s[])
+{
+	for (int i = 0; s[i] != '\0'; i++)
+	{
+		if (s[i] == '3')
+			(couter.LineNum++);
+	}
+	return (couter.LineNum);
+}
+
+//功能：字母判断
+bool is_cha(char str)
+{
+	if ((str >= 'a'&&str <= 'z') || (str >= 'A'&&str <= 'Z'))
+		return true;
+	else
+		return false;
+}
+
+//功能：判断一个字符串是否是单词，如果是 flag=1，不是flag=0
+int is_Word(string temp)
+{
+	int flag = 0;
+	int length = temp.length();
+	if (length < 4)
+	{
+		for (int i = 1;i <= length; i++)
+		{
+			if ((temp[i - 1] >= 'a'&&temp[i - 1] <= 'z') || (temp[i - 1] >= '0'&&temp[i - 1] <= '9') || (temp[i - 1] >= 'A'&&temp[i - 1] <= 'z'))
+			{
+				flag = 1;
+				break;
+			}
+			else
+			{
+				flag = 0;
+				break;
+			}
+		}
+	}
+	else
+	{
+		for (int j = 1; j <= 4; j++)
+		{
+			if ((temp[j - 1] >= 'a'&&temp[j - 1] <= 'z') || (temp[j - 1] >= 'A'&&temp[j - 1] <= 'Z'))
+			{
+				flag = 1;
+				break;
+			}
+			else
+			{
+				flag = 0;
+				break;
+			}
+		}
+	}
+	return flag;
+}
+
+//main函数
+
+#include "pch.h"
+#include <iostream>
+#include<fstream>
+#include<cstring>
+#include<istream>
+#include<string>
+
+
+using namespace std;
+
+
+
+int main()
+{
+	Couter couter1 = { 0,0,0};//结构体中字符总数、单词总数、行数初始化
+	char *buffer;
+
+	ifstream is("C:/Users/lenovo/Desktop/input.txt");//打开文件输入流进行读的操作
+	is.seekg(0, ios::end);
+	couter1.CharacterNum = is.tellg();
+	cout << "Characters:" <<"\t"<< couter1.CharacterNum << endl;
+	is.seekg(0, ios::beg);
+
+	int length = couter1.CharacterNum-1;
+	buffer=new char[length];
+	is.read(buffer, length);//将文件输入流读进buffer数组中
+
+	is.close();
+
+	Calcu c;//类声明对象c
+	couter1.WordNum=c.WordNum(buffer);//计算单词总数
+	cout<< "WordNum:" << "\t" << couter1.WordNum << endl;
+
+	couter1.LineNum = c.LineNum(buffer);//计算行数
+	cout<<"LineNum:" << "\t" << couter1.LineNum<< endl;
+	
+	
+	ofstream os("C:/Users/lenovo/Desktop/output.txt");//打开文件输出流进行写的操作
+	if (os)
+	{
+		os << "Characters:"<<"\t"<<couter1.CharacterNum<<endl;
+		os<< "WordNum:" << "\t" << couter1.WordNum << endl;
+		os << "LineNum:" << "\t" << couter1.LineNum << endl;
+	}
+	os.close();
+	return 0;
+
+}
